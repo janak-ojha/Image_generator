@@ -1,13 +1,37 @@
 import React ,{useState,useEffect}from 'react'
 import FormField from '../components/FormField'
 import Loader from '../components/Loader';
+import Card from '../components/Card';
+
+const RenderCards = ({ data, title }) => {
+    if (data?.length > 0) {
+      return data.map((post) => <Card key={post._id} {...post} />);
+    }
+
+    return (
+        <h2 className="mt-5 font-bold text-[#6449ff] text-xl uppercase">{title}</h2>
+      );
+    };
+    
 
 const Home = () => {
     const [searchText,setSearchText] = useState();
     const [loading, setLoading] = useState(false);
+    const [searchedResults, setSearchedResults] = useState(null);
+    const [searchTimeout, setSearchTimeout] = useState(null);
+    const [allPosts, setAllPosts] = useState(null);
+
+
 
     const handleSearchChange = (e) =>{
-
+    clearTimeout(searchTimeout);
+    setSearchText(e.target.value);
+    setSearchTimeout(
+        setTimeout(() => {
+          const searchResult = allPosts.filter((item) => item.name.toLowerCase().includes(searchText.toLowerCase()) || item.prompt.toLowerCase().includes(searchText.toLowerCase()));
+          setSearchedResults(searchResult);
+        }, 500),
+    );
     }
   return (
     <section className='max-w-7xl mx-auto '>
